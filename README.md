@@ -44,13 +44,23 @@ The CNN contains:
 
 ## 📊 Results
 
-The model was trained for 5 epochs.
+The model was trained for 5 epochs on the MNIST dataset.
 
-**Test Accuracy: 99.14%**
+### Test Performance
+
+_**Test Accuracy: 99.19%**_
+_**Task:**Handwritten digit classification
+_**Classes:**10(digits 0-9)
+_**Image Size:**20 x 20 pixels
+The confusion matrix shows that the model perform very well across all 10 digit classes.
 
 ## Model Output
 
 ![Model Result](results.png)
+
+### Confusion Matrix
+
+![Confusion Matrix](Confusion_matrix.png)
 
 The model successfully classified handwritten digits from the MNIST test dataset.
 
