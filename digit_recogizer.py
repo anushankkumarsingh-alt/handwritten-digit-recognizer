@@ -3,6 +3,8 @@
 
 import tensorflow as tf
 import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 print("🤖 Handwritten Digit Recognizer")
 print("--------------------------------")
@@ -16,20 +18,18 @@ print(f"Training images: {x_train.shape}")
 print(f"Testing images: {x_test.shape}")
 
 # 2. Normalize pixel values
-# Original pixel values are between 0 and 255.
-# We convert them to values between 0 and 1.
+# Convert values from 0-255 to 0-1
 
 x_train = x_train / 255.0
 x_test = x_test / 255.0
 
 # 3. Add channel dimension for CNN
-# MNIST images are 28x28.
-# CNN expects: height, width, channels.
+# Images become: 28 x 28 x 1
 
 x_train = x_train[..., tf.newaxis]
 x_test = x_test[..., tf.newaxis]
 
-# 4. Build the CNN model
+# 4. Build CNN model
 
 model = tf.keras.Sequential([
     tf.keras.layers.Conv2D(
@@ -68,12 +68,12 @@ model = tf.keras.Sequential([
     )
 ])
 
-# 5. Display model structure
+# 5. Show model architecture
 
 print("\n🧠 CNN Model:")
 model.summary()
 
-# 6. Compile the model
+# 6. Compile model
 
 model.compile(
     optimizer="adam",
@@ -81,7 +81,7 @@ model.compile(
     metrics=["accuracy"]
 )
 
-# 7. Train the model
+# 7. Train model
 
 print("\n🚀 Training model...")
 
@@ -92,7 +92,7 @@ history = model.fit(
     validation_split=0.1
 )
 
-# 8. Evaluate on test data
+# 8. Evaluate model
 
 print("\n📊 Evaluating model...")
 
@@ -104,14 +104,17 @@ test_loss, test_accuracy = model.evaluate(
 
 print(f"\n✅ Test Accuracy: {test_accuracy * 100:.2f}%")
 
-# 9. Make predictions
+# 9. Make predictions for first 10 images
 
-predictions = model.predict(x_test[:10], verbose=0)
+predictions = model.predict(
+    x_test[:10],
+    verbose=0
+)
 
 print("\n🔮 Predictions for first 10 test images:")
 
 for i in range(10):
-    predicted_digit = predictions[i].argmax()
+    predicted_digit = np.argmax(predictions[i])
     actual_digit = y_test[i]
 
     print(
@@ -120,7 +123,7 @@ for i in range(10):
         f"Actual = {actual_digit}"
     )
 
-# 10. Display some test images with predictions
+# 10. Display first 10 predictions
 
 plt.figure(figsize=(10, 4))
 
@@ -132,7 +135,7 @@ for i in range(10):
         cmap="gray"
     )
 
-    predicted_digit = predictions[i].argmax()
+    predicted_digit = np.argmax(predictions[i])
 
     plt.title(
         f"Pred: {predicted_digit}\n"
@@ -144,9 +147,44 @@ for i in range(10):
 plt.tight_layout()
 plt.show()
 
-# 11. Save the trained model
+# 11. Create predictions for the entire test dataset
+
+print("\n📊 Creating confusion matrix...")
+
+all_predictions = model.predict(
+    x_test,
+    verbose=0
+)
+
+predicted_labels = np.argmax(
+    all_predictions,
+    axis=1
+)
+
+# 12. Create confusion matrix
+
+cm = confusion_matrix(
+    y_test,
+    predicted_labels
+)
+
+disp = ConfusionMatrixDisplay(
+    confusion_matrix=cm,
+    display_labels=np.arange(10)
+)
+
+disp.plot(cmap="Blues")
+
+plt.title(
+    "MNIST Digit Recognition - Confusion Matrix"
+)
+
+plt.show()
+
+# 13. Save trained model
 
 model.save("mnist_digit_model.keras")
 
 print("\n💾 Model saved as mnist_digit_model.keras")
-print("🎉 Training complete!")
+
+print("\n🎉 Training and evaluation complete!")
