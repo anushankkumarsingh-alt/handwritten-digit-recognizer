@@ -48,6 +48,10 @@ The model was trained for 5 epochs.
 
 **Test Accuracy: 99.14%**
 
+## Model Output
+
+![Model Result](results.png)
+
 The model successfully classified handwritten digits from the MNIST test dataset.
 
 ## 🔮 Example Predictions
